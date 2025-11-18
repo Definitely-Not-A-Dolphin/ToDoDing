@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "dev": "deno -A src/index.ts"
+  },
+  "imports": {
+    "$src/": "./src/"
+  }
+}
