@@ -1,14 +1,33 @@
+import { db } from "./db.ts";
+import type { Route, ToDo } from "./types.ts";
 import { getRandomEmoji } from "./utils.ts";
-import { Route } from "./types.ts";
 
-export const thingRoute: Route = {
-  url: new URLPattern({ pathname: "/thing/:id" }),
-  execute: (_, match?: URLPatternResult) => {
-    const id = match?.pathname.groups.id;
+export const route404 = new Response(
+  JSON.stringify({
+    message: "Not found",
+    status: 404,
+  }),
+  {
+    status: 200,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+    },
+  },
+);
+
+export const todoIdRoute: Route = {
+  url: new URLPattern({ pathname: "/todo/:id" }),
+  execute: (_req, match) => {
+    const id = match.pathname.groups.id;
+
+    const todo = db.sql`SELECT * FROM todo WHERE id = ${id}`[0] as
+      | ToDo
+      | undefined;
+
+    if (!todo) return route404;
 
     const responseBody = JSON.stringify({
-      id: id,
-      from: "/thing",
+      ...todo,
       emoji: getRandomEmoji(),
     });
 
@@ -21,11 +40,11 @@ export const thingRoute: Route = {
   },
 };
 
-export const thingDefaultRoute: Route = {
-  url: new URLPattern({ pathname: "/thing" }),
-  execute: () => {
+export const todoDefaultRoute: Route = {
+  url: new URLPattern({ pathname: "/todo" }),
+  execute: (_req, _match) => {
     const responseBody = JSON.stringify({
-      from: "/thing",
+      todo_id_url: "/todo/:id",
       emoji: getRandomEmoji(),
     });
 
@@ -40,9 +59,9 @@ export const thingDefaultRoute: Route = {
 
 export const homeRoute: Route = {
   url: new URLPattern({ pathname: "/" }),
-  execute: () => {
+  execute: (req, _match) => {
     const responseBody = JSON.stringify({
-      from: "/",
+      from: req.url,
       emoji: getRandomEmoji(),
     });
 
