@@ -1,5 +1,5 @@
 import { type Route, routeGuard } from "./types.ts";
-import { route404 } from "./routes.ts";
+import { returnStatus } from "./routes.ts";
 
 const routes: Route[] = [];
 const modules = await import("./routes.ts") as object;
@@ -34,15 +34,25 @@ async function handler(req: Request): Promise<Response> {
       url.searchParams,
     );
 
-    if (req.body) {
-      const body = await req.text();
-      console.log("Body:", body);
-    }
+    const reqText = await req.text();
+    if (req.body) console.log("Body:", JSON.parse(reqText));
 
-    return await route.execute(req, match);
+    switch (req.method) {
+      case "GET":
+        if (route.GET) return await route.GET(req);
+        break;
+      case "POST":
+        if (route.POST) return await route.POST(req, JSON.parse(reqText));
+        break;
+      case "PUT":
+        if (route.PUT) return await route.PUT(req, JSON.parse(reqText));
+        break;
+      default:
+        returnStatus(405);
+    }
   }
 
-  return route404;
+  return returnStatus(404);
 }
 
 Deno.serve({ port: 7776 }, handler);

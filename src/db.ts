@@ -12,10 +12,11 @@ addSigListener(closeListener);
 
 db.sql`
   CREATE TABLE IF NOT EXISTS todo (
-    id INT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT KEY,
     description TEXT KEY,
     status TEXT KEY,
-    postDate TEXT KEY
+    postDate TEXT KEY,
+    closeDate TEXT KEY
   );
 `;
