@@ -1,12 +1,12 @@
 import { db } from "./db.ts";
-import { type Route, type ToDo, toDoGuard } from "./types.ts";
+import { partialToDoGuard, type Route, type ToDo, toDoGuard } from "./types.ts";
 import { getRandomEmoji } from "./utils.ts";
 
 export const returnStatus = (status: number) =>
   new Response(null, { status: status });
 
 export const todoIdRoute: Route = {
-  url: new URLPattern({ pathname: "/todo/id/:id" }),
+  url: new URLPattern({ pathname: "/todo/:id" }),
   GET: (req) => {
     const match = todoIdRoute.url.exec(req.url);
     if (!match) return returnStatus(404);
@@ -32,8 +32,8 @@ export const todoIdRoute: Route = {
     });
   },
   PUT: (req, putBody) => {
-    if (!toDoGuard(putBody)) return returnStatus(405);
-    const newData = putBody as Record<string, string>;
+    if (!partialToDoGuard(putBody)) return returnStatus(405);
+    const newData = putBody as Record<string, string | number>;
 
     const match = todoIdRoute.url.exec(req.url);
     if (!match) return returnStatus(404);
@@ -51,6 +51,16 @@ export const todoIdRoute: Route = {
       db.prepare(query).get(value, id);
     }
 
+    return returnStatus(200);
+  },
+  DELETE: (req) => {
+    const match = todoIdRoute.url.exec(req.url);
+    if (!match) return returnStatus(404);
+
+    const id = match.pathname.groups.id;
+    if (!id) return returnStatus(405);
+
+    db.sql`DELETE FROM todo WHERE id = ${id}`;
     return returnStatus(200);
   },
 };
