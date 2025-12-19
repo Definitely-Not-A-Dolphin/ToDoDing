@@ -1,5 +1,5 @@
 import { db } from "./db.ts";
-import { partialToDoGuard, type Route, type ToDo, toDoGuard } from "./types.ts";
+import { type Route, type ToDo, toDoGuard } from "./types.ts";
 import { getRandomEmoji } from "./utils.ts";
 
 export const returnStatus = (status: number) =>
@@ -32,7 +32,7 @@ export const todoIdRoute: Route = {
     });
   },
   PUT: (req, putBody) => {
-    if (!partialToDoGuard(putBody)) return returnStatus(405);
+    if (!toDoGuard(putBody)) return returnStatus(405);
     const newData = putBody as Record<string, string | number>;
 
     const match = todoIdRoute.url.exec(req.url);

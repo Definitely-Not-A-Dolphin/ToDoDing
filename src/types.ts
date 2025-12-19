@@ -37,7 +37,7 @@ const todoExample: ToDo = {
   url: "string",
 };
 
-export const toDoGuard = (object: object): boolean => {
+export function toDoGuard(object: object): boolean {
   for (const [key, value] of Object.entries(object)) {
     if (
       !(isObjKey(key, todoExample) && typeof todoExample[key] === typeof value)
@@ -45,4 +45,4 @@ export const toDoGuard = (object: object): boolean => {
   }
 
   return true;
-};
+}
