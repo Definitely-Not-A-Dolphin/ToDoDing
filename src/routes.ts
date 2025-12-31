@@ -3,7 +3,7 @@ import { type Route, type ToDo, toDoGuard } from "./types.ts";
 import { getRandomEmoji } from "./utils.ts";
 
 export const returnStatus = (status: number) =>
-  new Response(null, { status: status });
+  new Response(JSON.stringify({}), { status: status });
 
 export const todoIdRoute: Route = {
   url: new URLPattern({ pathname: "/todo/:id" }),
@@ -16,7 +16,6 @@ export const todoIdRoute: Route = {
     const todo = db.sql`SELECT * FROM todo WHERE id = ${id}`[0] as
       | ToDo
       | undefined;
-
     if (!todo) return returnStatus(404);
 
     const responseBody = JSON.stringify({
@@ -59,6 +58,11 @@ export const todoIdRoute: Route = {
 
     const id = match.pathname.groups.id;
     if (!id) return returnStatus(405);
+
+    const todo = db.sql`SELECT * FROM todo WHERE id = ${id}`[0] as
+      | ToDo
+      | undefined;
+    if (!todo) return returnStatus(404);
 
     db.sql`DELETE FROM todo WHERE id = ${id}`;
     return returnStatus(200);

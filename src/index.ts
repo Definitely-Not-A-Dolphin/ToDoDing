@@ -35,20 +35,21 @@ async function handler(req: Request): Promise<Response> {
     );
 
     const reqText = await req.text();
-    if (req.body) console.log("Body:", JSON.parse(reqText));
 
     switch (req.method.toUpperCase()) {
       case "GET":
         if (route.GET) return await route.GET(req);
         break;
       case "POST":
+        if (req.body) console.log("Body:", JSON.parse(reqText));
         if (route.POST) return await route.POST(req, JSON.parse(reqText));
         break;
       case "PUT":
+        if (req.body) console.log("Body:", JSON.parse(reqText));
         if (route.PUT) return await route.PUT(req, JSON.parse(reqText));
         break;
       case "DELETE":
-        if (route.PUT) return await route.PUT(req, JSON.parse(reqText));
+        if (route.DELETE) return await route.DELETE(req);
         break;
       default:
         returnStatus(405);
