@@ -1,7 +1,7 @@
 import { Database } from "@db/sqlite";
 import { addSigListener } from "./sigHandler.ts";
 
-export const db = new Database("todo.db");
+export const db = new Database("todo.db", { readonly: false });
 
 const closeListener = () => {
   console.log("Closing DB");
