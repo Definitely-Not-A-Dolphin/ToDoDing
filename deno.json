@@ -6,7 +6,7 @@
   "imports": {
     "$src/": "./src/",
     "@db/sqlite": "jsr:@db/sqlite@^0.13.0",
-    "@kuusi/kuusi": "jsr:@kuusi/kuusi@1.0.1"
+    "@kuusi/kuusi": "jsr:@kuusi/kuusi@1.0.2"
   },
   "lint": {
     "rules": {
